@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laundry Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .machine {
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            background-color: #2889a7;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+        .icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .booked {
+            background-color: rgb(216, 67, 67);
+        }
+
+
+
+
+
+
+        dialog {
+            border: none;
+            border-radius: 10px;
+        }
+
+
+        .modal_wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        ::backdrop {
+            background-color: gray;
+            opacity: 0.75;
+        }
+
+
+        #modal-buttons {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        dialog button {
+            padding: 10px;
+            border: none;
+            background-color: #479f5b;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+        #close-modal {
+            background-color: rgb(216, 67, 67);
+        }
+
+        #time-selected {
+            border-radius: 5px;
+        }
+
+        #email {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border: 1px solid;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script defer src="../js/load.js"></script>
+    <script defer src="../js/main.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <h2>Book a Machine</h2>
+        <div class="machine">
+            <p>🚿 Washer 1</p>
+            <button class="book-btn" data-machine-id="w1" data-machine-status=""></button>
+        </div>
+        <div class="machine">
+            <p>🚿 Washer 2</p>
+            <button class="book-btn" data-machine-id="w2" data-machine-status=""></button>
+        </div>
+        <div class="machine">
+            <p>🧺 Dryer 1</p>
+            <button class="book-btn" data-machine-id="d1" data-machine-status=""></button>
+        </div>
+        <div class="machine">
+            <p>🧺 Dryer 2</p>
+            <button class="book-btn" data-machine-id="d2" data-machine-status=""></button>
+        </div>
+        <dialog>
+            <div class="modal_wrapper">
+                <h2 data-machine-id="" id="machine-id"></h2>
+                <label>
+                    How long do you want to reserve this machine?
+                    <select id="time-selected">
+                    <option value="none">Choose…</option>
+                    <option>30 mins</option>
+                    <option>1 hour</option>
+                    <option>1 hour 30 mins</option>
+                    </select>
+                </label>
+                <input type="email" name="email" id="email" placeholder="Email">
+                <div id="modal-buttons">
+                    <button id="submit-modal" disabled>Book</button>
+                    <button id="close-modal" autofocus>Close</button>
+                </div>
+            </div>
+        </dialog>
+    </div>
+</body>
+</html>
