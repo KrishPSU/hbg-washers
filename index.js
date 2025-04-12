@@ -281,7 +281,7 @@ function getMachineNameById(machineId) {
 
 
 async function updateLogs(content, type) {
-    if (process.env.PRODUCTION == true) {
+    if (true) {
         const { error } = await supabase
             .from('logs')
             .insert({ content: content, type: type })
