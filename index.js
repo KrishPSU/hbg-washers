@@ -1,7 +1,10 @@
 const express = require("express");
 const socket = require("socket.io");
 
+// const serverless = require('serverless-http');
 const app = express();
+// const router = express.Router();
+
 
 require('dotenv').config();
 
@@ -9,47 +12,34 @@ require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js')
 
 // Create a single supabase client for interacting with your database
-const supabase = createClient('https://aplpxfapazhrjvsfjdmo.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFwbHB4ZmFwYXpocmp2c2ZqZG1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQxNTAxNTgsImV4cCI6MjA1OTcyNjE1OH0.WkjRyxydhIfKnOn-h3-f7AO76Tl_Nw9xMqTTGM-zUjs')
-
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-
-
-function sendMail(to) {
-    const msg = {
-        to: to, // Change to your recipient
-        from: 'Krishschavan@gmail.com', // Change to your verified sender
-        subject: 'YOUR CLOTHES ARE READY!',
-        text: 'Go get your clothes!',
-        html: '<button href="google.com">Confirm you picked up your clothes</button>',
-      }
-      sgMail
-        .send(msg)
-        .then(() => {
-          console.log('Email sent')
-        })
-        .catch((error) => {
-        //   console.error(error)
-            console.error(error.response.body);
-        })
-}
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 
 
 
 
-
+// index.js
 const { Resend } = require('resend');
 
-const resend = new Resend('re_FZa48Tat_Q4fiRgns657pz1iArkYKPhm3');
+const resend = new Resend(process.env.RESEND_API_KEY); // replace with your key
 
-resend.emails.send({
-  from: 'Acme <krishschavan@gmail.com>', // onboarding@resend.dev
-  to: ['krishschavan@gmail.com'],
-  subject: 'hello world',
-  html: '<p>it works!</p>',
-});
+async function sendEmail(to, subject, html) {
+  try {
+    const data = await resend.emails.send({
+      from: 'HBG Washers <noreply@hbgwashers.com>', // this domain must be verified in Resend
+      to: [`${to}`], // destination email(s)
+      subject: subject,
+      html: html,
+    });
+
+    console.log('✅ Email sent:', data);
+  } catch (error) {
+    console.error('❌ Error sending email:', error);
+  }
+}
+
+// sendEmail();
+
 
 
 
@@ -159,28 +149,142 @@ io.on("connection", function (socket) {
     }
 
 
-    const setMachineStatus = async function(machineId) {
+    const setMachineStatus = async function(machineId, status) {
         const { data, error } = await supabase
             .from('machine-status')
-            .update({ available: false })
+            .update({ available: status })
             .eq('id', machineId)
             .single()
 
         if (error) {
             console.error(error);
             // socket.emit('print', error);
-        } else {
-            console.log(data);
-            return data;
-        }
+        } 
+        // else {
+            // console.log(data);
+            // return data;
+        // }
     }
 
-    socket.on('book-machine', async (machineId, email) => {
+    socket.on('book-machine', async (machineId, email, time) => {
         const status = await getMachineStatus(machineId);
         if (status.available) {
-            setMachineStatus(machineId);
+            setMachineStatus(machineId, false);
             socket.emit('machine-booked-successfully', machineId);
-            sendMail("krishschavan@gmail.com");
+            sendEmail(
+                email.trim(),
+                `${getMachineNameById(machineId)}, SUCCESSFULLY BOOKED!`,
+                `<html>
+                    <body style="font-family: Arial, sans-serif; background-color: #f6f6f6; padding: 20px;">
+                        <table style="max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px;">
+                        <tr>
+                            <td style="text-align: center;">
+                            <h2 style="color: #4CAF50;">✅ Washer Booked</h2>
+                            <p style="font-size: 16px; color: #333;">
+                                Your washer at <strong>HBG Washers</strong> has been successfully booked for ${time}!
+                            </p>
+                            <p style="font-size: 14px; color: #555;">
+                                Your spot is confirmed. You will be notified when your time is up and your clothes are done.
+                            </p>
+                            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                            <p style="font-size: 12px; color: #999;">
+                                Thank you for using HBG Washers! 🧺
+                            </p>
+                            </td>
+                        </tr>
+                        </table>
+                    </body>
+                </html>`
+            );
+            remindUser(machineId, email.trim(), time);
+        } else {
+            socket.emit('machine-already-booked', machineId);
         }
     });
+
+
+
+
+
+    const remindUser = (machineId, email, time) => {
+
+        let time_in_milli_secs;
+    
+        switch(time) {
+            case "30 mins":
+                time_in_milli_secs = 30 * 60 * 1000;    // 30 mins
+                break;
+            case "1 hour":
+                time_in_milli_secs = 60 * 60 * 1000;    // 1 hour
+                break;
+            case "1 hour 30 mins":
+                time_in_milli_secs = 90 * 60 * 1000;    // 1 hour 30 mins
+                break;
+            default:
+                time_in_milli_secs = 0;
+                return;
+        }
+    
+        if (time_in_milli_secs == 0) {
+            console.error(`Time:${time} is not right...`);
+            return;
+        }
+    
+    
+        console.log(`Machine:${machineId} will be done in ${time}.`);
+      
+        setTimeout(() => {
+          // Update DB or internal state
+          console.log(`Machine:${machineId} is done.`);
+          
+
+          setMachineStatus(machineId, true);
+
+
+          sendEmail(
+            email,
+            "Your laundry is done! 🧺 Time to pick it up",
+            `<html>
+                <body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px;">
+                    <table style="max-width: 500px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 20px;">
+                    <tr>
+                        <td style="text-align: center;">
+                        <h2 style="color: #4CAF50;">✅ Washer Complete</h2>
+                        <p style="font-size: 16px; color: #333;">
+                            Your laundry is done! Please pick it up to keep the machines available for others.
+                        </p>
+                        <p style="font-size: 14px; color: #555;">
+                            Thanks for using <strong>HBG Washers</strong>. If you need to start another load, machines are ready!
+                        </p>
+                        <div style="margin: 20px 0;">
+                            <a href="https://hbgwashers.com/" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: #fff; text-decoration: none; border-radius: 5px;">
+                            Book Another Machine
+                            </a>
+                        </div>
+                        <p style="font-size: 12px; color: #999;">Sent automatically by HBG Washers</p>
+                        </td>
+                    </tr>
+                    </table>
+                </body>
+            </html>`
+        );
+        }, time_in_milli_secs);
+      };
 });
+
+
+function getMachineNameById(machineId) {
+    switch(machineId) {
+        case "w1":
+            return "Washer 1";
+        case "w2":
+            return "Washer 2";
+        case "d1":
+            return "Dryer 1";
+        case "d2":
+            return "Dryer 2";
+        default:
+            console.error(`Machine id:${machineId} non-existent.`);
+            return "404";
+    }
+}
