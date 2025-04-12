@@ -12,7 +12,7 @@
         }
         .container {
             max-width: 400px;
-            margin: 50px auto;
+            margin: 100px auto;
             padding: 20px;
             background: white;
             border-radius: 10px;
@@ -100,6 +100,43 @@
             padding: 10px;
             border-radius: 5px;
         }
+
+
+
+
+        .alert {
+            padding: 20px;
+            background-color: #f44336;
+            color: white;
+            border-radius: 10px;
+            /* width: 70%; */
+            max-width: 500px;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+
+        .alert.success {background-color: #04AA6D;}
+        .alert.info {background-color: #2196F3;}
+        .alert.warning {background-color: #ff9800;}
+
+
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .closebtn:hover {
+            color: black;
+        }
     </style>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -108,6 +145,11 @@
 
 </head>
 <body>
+    <!-- <div class="alert success">
+        <span class="closebtn">&times;</span>
+        <strong>Washer 1 Booked!</strong>
+        <p>Please check your email to make sure you will be notified.</p>
+    </div> -->
     <div class="container">
         <h2>Book a Machine</h2>
         <div class="machine">
@@ -138,7 +180,7 @@
                     <option>1 hour 30 mins</option>
                     </select>
                 </label>
-                <input type="email" name="email" id="email" placeholder="Personal email">
+                <input type="email" name="email" id="email" placeholder="Email">
                 <div id="modal-buttons">
                     <button id="submit-modal" disabled>Book</button>
                     <button id="close-modal" autofocus>Close</button>
