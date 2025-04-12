@@ -13,6 +13,7 @@ book_btns.forEach(book_btn => {
     book_btn.addEventListener('click', () => {
         const machineId = book_btn.getAttribute('data-machine-id');
         const machineAvailable = book_btn.getAttribute('data-machine-status');
+        if (!machineAvailable) return;
         machine_checkout(machineId);
     })
 });
@@ -63,12 +64,33 @@ submit_modal.addEventListener('click', () => {
     if (!isValidEmail(email_field.value.trim())) return;
     if (time_selected.value == "none") return;
 
-    socket.emit('book-machine', machine_id_label.getAttribute("data-machine-id"), email_field.value.trim());
+    socket.emit('book-machine', machine_id_label.getAttribute("data-machine-id"), email_field.value.trim(), time_selected.value);
 });
 
 
 
 socket.on('machine-booked-successfully', (machineId) => {
-    console.log(`MACHINE, ${machineId} BOOKED!`);
     modal.close();
+    bookMachineInClient(machineId);
+    alert(`MACHINE, ${machineId} BOOKED! Please check your email to make sure you will be notified.`);
 });
+
+
+socket.on('machine-already-booked', (machineId) => {
+    modal.close();
+    bookMachineInClient(machineId);
+    alert(`SORYYYY MACHINE, ${machineId} WAS ALREADY BOOKED!`);
+});
+
+
+function bookMachineInClient(machineId) {
+    book_btns.forEach((btn) => {
+        if (btn.getAttribute('data-machine-id') == machineId) {
+            btn.classList.add('booked');
+            btn.setAttribute('data-machine-status', false);
+            btn.innerText = "Booked";
+            btn.disabled = true;
+            return;
+        }
+    });   
+}
