@@ -3,9 +3,6 @@ const socket = io();
 
 
 socket.on('all-machine-status', (data) => {
-    console.log(data);
-
-
     for (let i=0; i<data.length; i++) {
         let machine = data[i];
         for (let j=0; j<book_btns.length; j++) {
