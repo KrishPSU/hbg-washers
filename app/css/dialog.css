@@ -1,0 +1,50 @@
+dialog {
+    border: none;
+    border-radius: 10px;
+}
+
+
+.modal_wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+
+::backdrop {
+    background-color: gray;
+    opacity: 0.75;
+}
+
+
+#modal-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+dialog button {
+    padding: 10px;
+    border: none;
+    background-color: #479f5b;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+}
+#close-modal {
+    background-color: rgb(216, 67, 67);
+}
+
+#time-selected {
+    border-radius: 5px;
+}
+
+#email {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border: 1px solid;
+    padding: 10px;
+    border-radius: 5px;
+}
