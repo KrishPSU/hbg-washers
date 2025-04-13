@@ -72,14 +72,14 @@ submit_modal.addEventListener('click', () => {
 socket.on('machine-booked-successfully', (machineId) => {
     modal.close();
     bookMachineInClient(machineId);
-    alert(`MACHINE, ${machineId} BOOKED! Please check your email to make sure you will be notified.`);
+    sendAlert(`${getMachineNameById(machineId)} Booked!`, "Please check your email to make sure you will be notified.", "success");
 });
 
 
 socket.on('machine-already-booked', (machineId) => {
     modal.close();
     bookMachineInClient(machineId);
-    alert(`SORYYYY MACHINE, ${machineId} WAS ALREADY BOOKED!`);
+    sendAlert(`Sorry, ${getMachineNameById(machineId)} is already booked.`, "Check again later to see if it is free.", "error");
 });
 
 
@@ -93,4 +93,21 @@ function bookMachineInClient(machineId) {
             return;
         }
     });   
+}
+
+
+function getMachineNameById(machineId) {
+    switch(machineId) {
+        case "w1":
+            return "Washer 1";
+        case "w2":
+            return "Washer 2";
+        case "d1":
+            return "Dryer 1";
+        case "d2":
+            return "Dryer 2";
+        default:
+            // console.error(`Machine id:${machineId} non-existent.`);
+            return "404";
+    }
 }
