@@ -4,152 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laundry Booking</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            margin-bottom: 20px;
-        }
-        .machine {
-            margin: 10px 0;
-        }
-        button {
-            padding: 10px;
-            border: none;
-            background-color: #2889a7;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 100%;
-        }
-        button:disabled {
-            background-color: #ccc;
-        }
-        .icon {
-            font-size: 24px;
-            margin-right: 10px;
-        }
-
-        .booked {
-            background-color: rgb(216, 67, 67);
-        }
-
-
-
-
-
-
-        dialog {
-            border: none;
-            border-radius: 10px;
-        }
-
-
-        .modal_wrapper {
-            display: flex;
-            flex-direction: column;
-        }
-
-
-        ::backdrop {
-            background-color: gray;
-            opacity: 0.75;
-        }
-
-
-        #modal-buttons {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        dialog button {
-            padding: 10px;
-            border: none;
-            background-color: #479f5b;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 100%;
-        }
-        #close-modal {
-            background-color: rgb(216, 67, 67);
-        }
-
-        #time-selected {
-            border-radius: 5px;
-        }
-
-        #email {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            border: 1px solid;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-
-
-
-        .alert {
-            padding: 20px;
-            background-color: #f44336;
-            color: white;
-            border-radius: 10px;
-            /* width: 70%; */
-            max-width: 500px;
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-
-        .alert.success {background-color: #04AA6D;}
-        .alert.info {background-color: #2196F3;}
-        .alert.warning {background-color: #ff9800;}
-
-
-        .closebtn {
-            margin-left: 15px;
-            color: white;
-            font-weight: bold;
-            float: right;
-            font-size: 22px;
-            line-height: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .closebtn:hover {
-            color: black;
-        }
-    </style>
 
     <script src="/socket.io/socket.io.js"></script>
     <script defer src="../js/load.js"></script>
     <script defer src="../js/main.js"></script>
+    <script defer src="../js/alert.js"></script>
+
+
+    <link rel="stylesheet" href="../css/alert.css">
+    <link rel="stylesheet" href="../css/dialog.css">
+    <link rel="stylesheet" href="../css/main.css">
 
 </head>
 <body>
-    <!-- <div class="alert success">
+    <div class="alert hide">
         <span class="closebtn">&times;</span>
-        <strong>Washer 1 Booked!</strong>
-        <p>Please check your email to make sure you will be notified.</p>
-    </div> -->
+        <strong id="alert-title">Washer 1 Booked!</strong>
+        <p id=alert-info>Please check your email to make sure you will be notified.</p>
+    </div>
     <div class="container">
         <h2>Book a Machine</h2>
         <div class="machine">
@@ -188,5 +60,23 @@
             </div>
         </dialog>
     </div>
+    <section id="how-to-use" style="padding: 40px 20px; background-color: #f5f5f5; border-top: 1px solid #ddd;">
+        <div style="max-width: 800px; margin: auto; text-align: center;">
+          <h2 style="font-size: 28px; margin-bottom: 20px; color: #333;">🧼 How to Use the Washers</h2>
+      
+          <ol style="text-align: left; font-size: 16px; color: #444; line-height: 1.6;">
+            <li><strong>Check machine availability</strong> on the main page and book a washer.</li>
+            <li><strong>Bring your laundry</strong> to the washer you booked.</li>
+            <li><strong>Load your clothes</strong> and add detergent (don’t overload it!).</li>
+            <li><strong>Press START</strong> on the washer within 5 minutes of booking.</li>
+            <li><strong>Come back when it's done</strong> — you'll get an email when the cycle finishes.</li>
+            <li><strong>Unload promptly</strong> so others can use the machine — be kind, be fast! 😊</li>
+          </ol>
+      
+          <p style="margin-top: 20px; font-size: 14px; color: #777;">
+            Questions? Text us at <strong>(908) 777-0350</strong>.
+          </p>
+        </div>
+      </section>
 </body>
 </html>
