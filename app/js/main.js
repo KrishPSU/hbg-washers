@@ -84,11 +84,13 @@ socket.on('machine-already-booked', (machineId) => {
 
 
 function bookMachineInClient(machineId, bookedTill) {
+    // console.log(bookedTill);
     book_btns.forEach((btn) => {
         if (btn.getAttribute('data-machine-id') == machineId) {
             btn.classList.add('booked');
             btn.setAttribute('data-machine-status', false);
-            btn.innerText = `Booked until ${bookedTill}`;
+            // btn.innerText = `Booked until ${bookedTill}`;
+            btn.innerText = "Booked";
             btn.disabled = true;
             return;
         }
