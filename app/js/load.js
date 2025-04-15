@@ -3,6 +3,9 @@ const socket = io();
 
 
 socket.on('all-machine-status', (data) => {
+    console.log(data);
+
+
     for (let i=0; i<data.length; i++) {
         let machine = data[i];
         for (let j=0; j<book_btns.length; j++) {
@@ -14,7 +17,7 @@ socket.on('all-machine-status', (data) => {
                     btn.classList.remove("booked");
                     btn.disabled = false;
                 } else {
-                    btn.innerText = "Booked";
+                    btn.innerText = `Booked until ${prettyPrintTime(machine.time_end)}`;
                     btn.classList.add("booked");
                     btn.disabled = true;
                 }
@@ -22,3 +25,15 @@ socket.on('all-machine-status', (data) => {
         }
     }
 });
+
+
+function prettyPrintTime(time) {
+    let [hours, minutes] = time.split(':');
+
+    // Remove leading 0 from hour if present
+    if (hours.startsWith('0')) {
+        hours = hours.slice(1);
+    }
+
+    return `${hours}:${minutes}`;
+}
