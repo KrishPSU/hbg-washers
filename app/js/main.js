@@ -69,9 +69,9 @@ submit_modal.addEventListener('click', () => {
 
 
 
-socket.on('machine-booked-successfully', (machineId) => {
+socket.on('machine-booked-successfully', (machineId, bookedTill) => {
     modal.close();
-    bookMachineInClient(machineId);
+    bookMachineInClient(machineId, bookedTill);
     sendAlert(`${getMachineNameById(machineId)} Booked!`, "Please check your email to make sure you will be notified.", "success");
 });
 
@@ -83,12 +83,12 @@ socket.on('machine-already-booked', (machineId) => {
 });
 
 
-function bookMachineInClient(machineId) {
+function bookMachineInClient(machineId, bookedTill) {
     book_btns.forEach((btn) => {
         if (btn.getAttribute('data-machine-id') == machineId) {
             btn.classList.add('booked');
             btn.setAttribute('data-machine-status', false);
-            btn.innerText = "Booked";
+            btn.innerText = `Booked until ${bookedTill}`;
             btn.disabled = true;
             return;
         }
