@@ -28,8 +28,10 @@ async function sendEmail(to, subject, html) {
     });
 
     console.log('✅ Email sent:', data);
+    updateLogs(`✅ Email sent:${to}`);
   } catch (error) {
     console.error('❌ Error sending email:', error);
+    updateLogs(`❌ Error sending email:${to}`);
   }
 }
 
@@ -138,10 +140,22 @@ io.on("connection", function (socket) {
     }
 
 
-    const setMachineStatus = async function(machineId, status) {
+    const setMachineStatus = async function(machineId, status, time_set, personThatBooked) {
+        const currentTimeString = getFutureTime();
+        let timeEndString;
+        
+        if (time_set == "30 mins") {
+            timeEndString = getFutureTime(30);
+        } else if (time_set == "1 hour") {
+            timeEndString = getFutureTime(60);
+        } else if (time_set == "1 hour 30 mins") {
+            timeEndString = getFutureTime(90);
+        }
+
+
         const { data, error } = await supabase
             .from(process.env.DB)
-            .update({ available: status })
+            .update({ available: status, time_booked: currentTimeString, time_end: timeEndString, person_that_booked: personThatBooked })
             .eq('id', machineId)
             .single()
 
@@ -149,13 +163,15 @@ io.on("connection", function (socket) {
             console.error(error);
             updateLogs(error, "ERROR");
         }
+
+	return timeEndString;
     }
 
     socket.on('book-machine', async (machineId, email, time) => {
         const status = await getMachineStatus(machineId);
         if (status.available) {
-            setMachineStatus(machineId, false);
-            socket.emit('machine-booked-successfully', machineId);
+            let bookedTill = setMachineStatus(machineId, false, time, email);
+            socket.emit('machine-booked-successfully', machineId, bookedTill);
             sendEmail(
                 email.trim(),
                 `${getMachineNameById(machineId)}, SUCCESSFULLY BOOKED!`,
@@ -291,4 +307,20 @@ async function updateLogs(content, type) {
             return;
         }
     }
+}
+
+
+function getFutureTime(addMinutes = 0) {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + addMinutes);
+
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 becomes 12
+
+    return `${hours}:${minutes}:${seconds} ${ampm}`;
 }
