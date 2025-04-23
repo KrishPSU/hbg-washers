@@ -9,8 +9,10 @@
     <script defer src="../js/load.js"></script>
     <script defer src="../js/main.js"></script>
     <script defer src="../js/alert.js"></script>
+    <script defer src="../js/feedback.js"></script>
 
 
+    <link rel="stylesheet" href="../css/feedback.css">
     <link rel="stylesheet" href="../css/alert.css">
     <link rel="stylesheet" href="../css/dialog.css">
     <link rel="stylesheet" href="../css/main.css">
@@ -22,6 +24,25 @@
         <strong id="alert-title">Washer 1 Booked!</strong>
         <p id=alert-info>Please check your email to make sure you will be notified.</p>
     </div>
+
+    <!-- Feedback Button -->
+    <button id="feedback-btn">📝 Feedback</button>
+
+    <!-- Modal Structure -->
+    <div id="overlay" class="overlay hidden">
+        <div class="modal-box">
+            <span id="close-feedback-btn">&times;</span>
+            <h2>We’d love your feedback!</h2>
+            <p>What can we improve or what worked well?</p>
+            <textarea id="feedbackInput" placeholder="Type your feedback here..." rows="5" required></textarea>
+            <div class="modal-actions">
+                <button id="submit-feedback-btn" class="submit-btn">Submit</button>
+                <button id="cancel-feedback-btn">Cancel</button>
+            </div>
+            <p id="feedbackMessage" class="feedback-msg"></p>
+        </div>
+    </div>
+
     <div class="container">
         <h2>Book a Machine</h2>
         <div class="machine">
