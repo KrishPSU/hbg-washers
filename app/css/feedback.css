@@ -48,7 +48,7 @@ body.modal-open {
   /* Modal Box */
   .modal-box {
     background: white;
-    padding: 20px 45px 10px 25px;
+    padding: 20px 25px 10px 25px;
     border-radius: 12px;
     width: 90%;
     max-width: 400px;
@@ -73,7 +73,7 @@ body.modal-open {
   
   /* Textarea */
   textarea {
-    width: 100%;
+    width: 95%;
     padding: 10px;
     font-size: 14px;
     border: 1px solid #ccc;
