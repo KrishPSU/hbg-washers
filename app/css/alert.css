@@ -36,7 +36,7 @@
 }
 
 
-.alert.success {background-color: #04AA6D;}
+.alert.success {background-color: #007BFF;}  /* old color (green): #04AA6D */
 .alert.info {background-color: #2196F3;}
 .alert.warning {background-color: #ff9800;}
 
