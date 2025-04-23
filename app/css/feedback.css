@@ -1,0 +1,119 @@
+/* Page Scroll Lock Class */
+body.modal-open {
+    overflow: hidden;
+    pointer-events: none;
+  }
+  body.modal-open #overlay {
+    pointer-events: auto;
+  }
+  
+  /* Feedback Button */
+  #feedback-btn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 150px;
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    z-index: 1000;
+  }
+  #feedback-btn:hover {
+    background-color: #038a59;
+  }
+  
+  /* Overlay */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hidden {
+    display: none;
+  }
+  
+  /* Modal Box */
+  .modal-box {
+    background: white;
+    padding: 20px 45px 10px 25px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
+    position: relative;
+  }
+  
+  /* Close Button */
+  #close-feedback-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+  }
+  #close-feedback-btn:hover {
+    color: black;
+  }
+  
+  /* Textarea */
+  textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: none;
+    margin-top: 10px;
+    margin-bottom: 15px;
+  }
+  
+  /* Action Buttons */
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .modal-actions button {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .submit-btn {
+    background-color: #04AA6D;
+    color: white;
+  }
+  .submit-btn:hover {
+    background-color: #038a59;
+  }
+  .modal-actions button:not(.submit-btn) {
+    background-color: #ccc;
+  }
+  .modal-actions button:not(.submit-btn):hover {
+    background-color: #bbb;
+  }
+  
+  /* Message */
+  .feedback-msg {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: bold;
+  }
