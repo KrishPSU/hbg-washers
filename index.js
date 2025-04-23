@@ -274,6 +274,30 @@ io.on("connection", function (socket) {
         );
         }, time_in_milli_secs);
       };
+
+
+
+
+    socket.on('new-feedback', (feedbackText) => {
+        sendEmail("Krishschavan@gmail.com", "New feedback reported", `
+            <html>
+                <body>
+                    <div>
+                        <p>
+                            <span>
+                                "
+                            </span>
+                            ${feedbackText}
+                            <span>
+                                "
+                            </span>
+                        </p>
+                    </div>
+                </body>
+            </html>
+        `);
+        updateLogs(feedbackText, "FEEDBACK");
+    });
 });
 
 
