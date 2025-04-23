@@ -9,7 +9,7 @@ body.modal-open {
   
   /* Feedback Button */
   #feedback-btn {
-    position: fixed;
+    /* position: fixed;
     top: 10px;
     right: 10px;
     width: 150px;
@@ -22,10 +22,29 @@ body.modal-open {
     font-weight: bold;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     cursor: pointer;
+    z-index: 1000; */
+
+
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 150px;
+    background-color: #007BFF;
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
     z-index: 1000;
+
   }
   #feedback-btn:hover {
-    background-color: #038a59;
+    /* background-color: #038a59; */
+
+    background-color: #0056b3;
   }
   
   /* Overlay */
@@ -97,11 +116,15 @@ body.modal-open {
     cursor: pointer;
   }
   .submit-btn {
-    background-color: #04AA6D;
+    /* background-color: #04AA6D;
+    color: white; */
+
+    background-color: #007BFF;
     color: white;
   }
   .submit-btn:hover {
-    background-color: #038a59;
+    /* background-color: #038a59; */
+    background-color: #0056b3;
   }
   .modal-actions button:not(.submit-btn) {
     background-color: #ccc;
