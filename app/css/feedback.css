@@ -26,8 +26,8 @@ body.modal-open {
 
 
     position: fixed;
-    bottom: 10px;
-    right: 10px;
+    bottom: 20px;
+    right: 20px;
     width: 150px;
     background-color: #007BFF;
     color: white;
