@@ -14,7 +14,8 @@ socket.on('all-machine-status', (data) => {
                     btn.classList.remove("booked");
                     btn.disabled = false;
                 } else {
-                    btn.innerText = `Booked until ${prettyPrintTime(machine.time_end)}`;
+                    // btn.innerText = `Booked until ${prettyPrintTime(machine.time_end)}`;
+                    btn.innerText = "Booked";
                     btn.classList.add("booked");
                     btn.disabled = true;
                 }
