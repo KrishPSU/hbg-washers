@@ -1,6 +1,9 @@
 const express = require("express");
 const socket = require("socket.io");
+
+// const serverless = require('serverless-http');
 const app = express();
+// const router = express.Router();
 
 
 require('dotenv').config();
@@ -28,10 +31,8 @@ async function sendEmail(to, subject, html) {
     });
 
     console.log('✅ Email sent:', data);
-    updateLogs(`✅ Email sent:${to}`);
   } catch (error) {
     console.error('❌ Error sending email:', error);
-    updateLogs(`❌ Error sending email:${to}`);
   }
 }
 
@@ -55,6 +56,7 @@ var path = require("path");
 var bodyParser = require('body-parser');
 var helmet = require('helmet');
 var rateLimit = require("express-rate-limit");
+// const { time } = require("console");
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -76,6 +78,10 @@ app.get('/', function(req,res){
     // res.send("Welcome!");
     res.sendFile(path.join(__dirname, './app/pages/index.html'));
 });
+app.get('/test', function(req,res){
+    // res.send("Welcome!");
+    res.sendFile(path.join(__dirname, './app/pages/test.html'));
+});
 
 
 
@@ -95,6 +101,27 @@ app.get('/logs/:adminid', async (req, res) => {
         res.send(data);
 });
 
+// app.get('/machine/:machineid', function(req,res){
+//     const machine_id = req.params.machineid;
+//     switch (machine_id) {
+//         case "w1":
+//             res.sendFile(path.join(__dirname, './app/pages/machine.html'));
+//             break;
+//         case "w2":
+//             res.sendFile(path.join(__dirname, './app/pages/machine.html'));
+//             break;
+//         case "d1":
+//             res.sendFile(path.join(__dirname, './app/pages/machine.html'));
+//             break;
+//         case "d2":
+//             res.sendFile(path.join(__dirname, './app/pages/machine.html'));
+//             break;
+//         default:
+//             res.send("No machine found.");
+//     }
+    
+// });
+
 
 
 const server = app.listen(process.env.PORT || 3001, () => {
@@ -103,6 +130,37 @@ const server = app.listen(process.env.PORT || 3001, () => {
 });
 
 var io = socket(server);
+
+let subscriptions = [];
+/*
+app.post('/save-subscription', (req, res) => {
+     const subscription = req.body;
+     subscriptions.push(subscription);
+     res.status(201).json({ message: "Subscription saved" });
+});
+*/
+
+const webpush = require('web-push');
+
+// const vapidKeys = webpush.generateVAPIDKeys();
+
+// console.log(vapidKeys);
+
+
+webpush.setVapidDetails(
+  'mailto:noreply@hbgwashers.com',
+  'BDkLN_ToX-Gk27oZGqRQ6Xd-sgZwzd8N0JKW-JGsBdSHKUuk4thSZbUck-z-DdJ1sGMwcbGQqlq4sjFcjYA-534',
+  'CqseDf4Op6K6vtcnsGfabK7a4NXlYH58QiRVQMMpmnw'
+);
+
+
+
+const payload = JSON.stringify({
+  title: 'Washer done!',
+  body: 'Your washer is now available. Please pick up your laundry.'
+});
+
+
 
 
 io.on("connection", function (socket) {
@@ -117,6 +175,7 @@ io.on("connection", function (socket) {
         if (error) {
             console.error(error);
             updateLogs(error, "ERROR");
+            // socket.emit('print', error);
         } else {
             socket.emit('all-machine-status', data);
         }
@@ -134,6 +193,7 @@ io.on("connection", function (socket) {
         if (error) {
             console.error(error);
             updateLogs(error, "ERROR");
+            // socket.emit('print', error);
         } else {
             return data;
         }
@@ -162,41 +222,60 @@ io.on("connection", function (socket) {
         if (error) {
             console.error(error);
             updateLogs(error, "ERROR");
-        }
+            // socket.emit('print', error);
+        } 
+        // else {
+            // console.log(data);
+            // return data;
+        // }
 
-	return timeEndString;
+        return timeEndString;
     }
+
+
+
+    socket.on('notis-enabled', (subscription) => {
+        subscriptions.push(subscription);
+    });
+
+
+    socket.on('get-noti', (subscription) => {
+        webpush.sendNotification(subscription, payload);
+    });
+
+
+
 
     socket.on('book-machine', async (machineId, email, time) => {
         const status = await getMachineStatus(machineId);
         if (status.available) {
             let bookedTill = setMachineStatus(machineId, false, time, email);
             socket.emit('machine-booked-successfully', machineId, bookedTill);
-            sendEmail(
-                email.trim(),
-                `${getMachineNameById(machineId)}, SUCCESSFULLY BOOKED!`,
-                `<html>
-                    <body style="font-family: Arial, sans-serif; background-color: #f6f6f6; padding: 20px;">
-                        <table style="max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px;">
-                        <tr>
-                            <td style="text-align: center;">
-                            <h2 style="color: #4CAF50;">✅ Washer Booked</h2>
-                            <p style="font-size: 16px; color: #333;">
-                                Your washer at <strong>HBG Washers</strong> has been successfully booked for ${time}!
-                            </p>
-                            <p style="font-size: 14px; color: #555;">
-                                Your spot is confirmed. You will be notified when your time is up and your clothes are done.
-                            </p>
-                            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-                            <p style="font-size: 12px; color: #999;">
-                                Thank you for using HBG Washers! 🧺
-                            </p>
-                            </td>
-                        </tr>
-                        </table>
-                    </body>
-                </html>`
-            );
+            // sendEmail(
+            //     email.trim(),
+            //     `${getMachineNameById(machineId)}, SUCCESSFULLY BOOKED!`,
+            //     `<html>
+            //         <body style="font-family: Arial, sans-serif; background-color: #f6f6f6; padding: 20px;">
+            //             <table style="max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px;">
+            //             <tr>
+            //                 <td style="text-align: center;">
+            //                 <h2 style="color: #4CAF50;">✅ Washer Booked</h2>
+            //                 <p style="font-size: 16px; color: #333;">
+            //                     Your washer at <strong>HBG Washers</strong> has been successfully booked for ${time}!
+            //                 </p>
+            //                 <p style="font-size: 14px; color: #555;">
+            //                     Your spot is confirmed. You will be notified when your time is up and your clothes are done.
+            //                 </p>
+            //                 <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            //                 <p style="font-size: 12px; color: #999;">
+            //                     Thank you for using HBG Washers! 🧺
+            //                 </p>
+            //                 </td>
+            //             </tr>
+            //             </table>
+            //         </body>
+            //     </html>`
+            // );
             remindUser(machineId, email.trim(), time);
         } else {
             socket.emit('machine-already-booked', machineId);
@@ -242,39 +321,38 @@ io.on("connection", function (socket) {
           updateLogs(`Machine:${machineId} is done.`, "LOG");
           
 
-          setMachineStatus(machineId, true);
+        //   setMachineStatus(machineId, true);
 
 
-          sendEmail(
-            email,
-            "Your laundry is done! 🧺 Time to pick it up",
-            `<html>
-                <body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px;">
-                    <table style="max-width: 500px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 20px;">
-                    <tr>
-                        <td style="text-align: center;">
-                        <h2 style="color: #4CAF50;">✅ Washer Complete</h2>
-                        <p style="font-size: 16px; color: #333;">
-                            Your laundry is done! Please pick it up to keep the machines available for others.
-                        </p>
-                        <p style="font-size: 14px; color: #555;">
-                            Thanks for using <strong>HBG Washers</strong>. If you need to start another load, machines are ready!
-                        </p>
-                        <div style="margin: 20px 0;">
-                            <a href="https://hbgwashers.com/" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: #fff; text-decoration: none; border-radius: 5px;">
-                            Book Another Machine
-                            </a>
-                        </div>
-                        <p style="font-size: 12px; color: #999;">Sent automatically by HBG Washers</p>
-                        </td>
-                    </tr>
-                    </table>
-                </body>
-            </html>`
-        );
-        }, time_in_milli_secs);
+        //   sendEmail(
+        //     email,
+        //     "Your laundry is done! 🧺 Time to pick it up",
+        //     `<html>
+        //         <body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px;">
+        //             <table style="max-width: 500px; margin: auto; background-color: #ffffff; border-radius: 10px; padding: 20px;">
+        //             <tr>
+        //                 <td style="text-align: center;">
+        //                 <h2 style="color: #4CAF50;">✅ Washer Complete</h2>
+        //                 <p style="font-size: 16px; color: #333;">
+        //                     Your laundry is done! Please pick it up to keep the machines available for others.
+        //                 </p>
+        //                 <p style="font-size: 14px; color: #555;">
+        //                     Thanks for using <strong>HBG Washers</strong>. If you need to start another load, machines are ready!
+        //                 </p>
+        //                 <div style="margin: 20px 0;">
+        //                     <a href="https://hbgwashers.com/" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: #fff; text-decoration: none; border-radius: 5px;">
+        //                     Book Another Machine
+        //                     </a>
+        //                 </div>
+        //                 <p style="font-size: 12px; color: #999;">Sent automatically by HBG Washers</p>
+        //                 </td>
+        //             </tr>
+        //             </table>
+        //         </body>
+        //     </html>`
+        // );
+        }, 1000);   // time_in_milli_secs
       };
-
 
 
 
@@ -321,7 +399,7 @@ function getMachineNameById(machineId) {
 
 
 async function updateLogs(content, type) {
-    if (true) {
+    if (process.env.PRODUCTION == true) {
         const { error } = await supabase
             .from('logs')
             .insert({ content: content, type: type })
