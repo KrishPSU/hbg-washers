@@ -104,6 +104,40 @@ const server = app.listen(process.env.PORT || 3001, () => {
 
 var io = socket(server);
 
+let subscriptions = [];
+const webpush = require('web-push');
+webpush.setVapidDetails(
+  'mailto:noreply@hbgwashers.com',
+  'BDkLN_ToX-Gk27oZGqRQ6Xd-sgZwzd8N0JKW-JGsBdSHKUuk4thSZbUck-z-DdJ1sGMwcbGQqlq4sjFcjYA-534',
+  'CqseDf4Op6K6vtcnsGfabK7a4NXlYH58QiRVQMMpmnw'
+);
+
+function createNotiMessage(title, body) {
+    const payload = JSON.stringify({
+        title: title,
+        body: body
+    });
+    return payload;
+}
+
+
+
+
+const save_notification_subscription = async function(sub) {
+    subscriptions.push(sub);
+    const saveSubscriptions = async function() {
+        const { data, error } = await supabase
+            .from('noti-subscriptions')
+            .insert({ subscriptions: subscriptions })
+
+        if (error) {
+            console.error(error);
+            updateLogs(error, "ERROR");
+            // socket.emit('print', error);
+        }
+    };
+    saveSubscriptions();
+}
 
 io.on("connection", function (socket) {
     console.log("Made socket connection");
@@ -167,6 +201,12 @@ io.on("connection", function (socket) {
 	return timeEndString;
     }
 
+
+    socket.on('notis-enabled', (subscription) => {
+        save_notification_subscription(subscription);
+    });
+	
+
     socket.on('book-machine', async (machineId, email, time) => {
         const status = await getMachineStatus(machineId);
         if (status.available) {
@@ -197,7 +237,7 @@ io.on("connection", function (socket) {
                     </body>
                 </html>`
             );
-            remindUser(machineId, email.trim(), time);
+            remindUser(machineId, email.trim(), time, noti_subscription);
         } else {
             socket.emit('machine-already-booked', machineId);
         }
@@ -207,7 +247,7 @@ io.on("connection", function (socket) {
 
 
 
-    const remindUser = (machineId, email, time) => {
+    const remindUser = (machineId, email, time, noti_subscription) => {
 
         let time_in_milli_secs;
     
@@ -243,7 +283,7 @@ io.on("connection", function (socket) {
           
 
           setMachineStatus(machineId, true);
-
+	  webpush.sendNotification(noti_subscription, createNotiMessage(`${getMachineNameById(machineId)} is done!`, 'Please pick up your laundry.'));
 
           sendEmail(
             email,
