@@ -138,8 +138,7 @@ function isInStandaloneMode() {
 }
     
 // Show prompt only if on iOS Safari and NOT installed
-// if (isIos() && isSafari() && !isInStandaloneMode()) {
-if (true) {
+if (isIos() && isSafari() && !isInStandaloneMode()) {
     const prompt = document.getElementById('install-prompt');
     prompt.style.display = 'block';
     setTimeout(() => {
