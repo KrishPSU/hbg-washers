@@ -114,3 +114,44 @@ function getMachineNameById(machineId) {
             return "404";
     }
 }
+
+
+
+const dismiss_prompt_btn = document.getElementById('dismiss-prompt-btn');
+
+dismiss_prompt_btn.addEventListener('click', () => {
+    dismissPrompt();
+});
+
+
+// Helper functions
+function isIos() {
+    return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+    
+function isSafari() {
+    return /^((?!chrome|android).)*safari/i.test(window.navigator.userAgent);
+}
+    
+function isInStandaloneMode() {
+    return ('standalone' in window.navigator) && window.navigator.standalone;
+}
+    
+// Show prompt only if on iOS Safari and NOT installed
+// if (isIos() && isSafari() && !isInStandaloneMode()) {
+if (true) {
+    const prompt = document.getElementById('install-prompt');
+    prompt.style.display = 'block';
+    setTimeout(() => {
+      prompt.style.opacity = '1';
+    }, 50);
+}
+    
+// Dismiss prompt function
+function dismissPrompt() {
+    const prompt = document.getElementById('install-prompt');
+    prompt.style.opacity = '0';
+    setTimeout(() => {
+      prompt.style.display = 'none';
+    }, 500);
+}
