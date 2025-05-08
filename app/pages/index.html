@@ -108,5 +108,81 @@
           </p>
         </div>
       </section>
+
+    <!-- Add to Home Screen Prompt (optimized for hbgwashers.com style) -->
+<div id="install-prompt" style="
+display: none;
+position: fixed;
+bottom: 20px;
+left: 16px;
+right: 16px;
+background-color: #e6f0fa;
+color: #333;
+border-radius: 12px;
+box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+padding: 16px;
+z-index: 9999;
+font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.4;
+opacity: 0;
+transition: opacity 0.5s ease;
+">
+<strong>Get notified when washers are ready!</strong>
+<p style="margin-top: 8px; margin-bottom: 8px;">
+  To enable notifications, please add this site to your Home Screen:
+</p>
+<ul style="margin: 8px 0; padding-left: 20px;">
+  <li>Tap the <strong>Share</strong> button at the bottom of Safari</li>
+  <li>Select <strong>Add to Home Screen</strong></li>
+  <li>Open the app from your Home Screen</li>
+</ul>
+<button onclick="dismissPrompt()" style="
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 8px;
+">Got it</button>
+</div>
+
+<script>
+// Helper functions
+function isIos() {
+return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
+function isSafari() {
+return /^((?!chrome|android).)*safari/i.test(window.navigator.userAgent);
+}
+
+function isInStandaloneMode() {
+return ('standalone' in window.navigator) && window.navigator.standalone;
+}
+
+// Show prompt only if on iOS Safari and NOT installed
+// if (isIos() && isSafari() && !isInStandaloneMode()) {
+if (true) {
+const prompt = document.getElementById('install-prompt');
+prompt.style.display = 'block';
+setTimeout(() => {
+  prompt.style.opacity = '1';
+}, 50);
+}
+
+// Dismiss prompt function
+function dismissPrompt() {
+const prompt = document.getElementById('install-prompt');
+prompt.style.opacity = '0';
+setTimeout(() => {
+  prompt.style.display = 'none';
+}, 500);
+}
+</script>
+
+    
 </body>
 </html>
