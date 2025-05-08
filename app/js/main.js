@@ -57,6 +57,7 @@ function machine_checkout(machineId) {
     }
     machine_id_label.setAttribute("data-machine-id", machineId);
     modal.showModal();
+    enableNotifications();
 }
 
 
@@ -64,7 +65,7 @@ submit_modal.addEventListener('click', () => {
     if (!isValidEmail(email_field.value.trim())) return;
     if (time_selected.value == "none") return;
 
-    socket.emit('book-machine', machine_id_label.getAttribute("data-machine-id"), email_field.value.trim(), time_selected.value);
+    socket.emit('book-machine', machine_id_label.getAttribute("data-machine-id"), email_field.value.trim(), time_selected.value, sub);
 });
 
 
