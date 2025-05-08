@@ -207,7 +207,7 @@ io.on("connection", function (socket) {
     });
 	
 
-    socket.on('book-machine', async (machineId, email, time) => {
+    socket.on('book-machine', async (machineId, email, time, noti_subscription) => {
         const status = await getMachineStatus(machineId);
         if (status.available) {
             let bookedTill = setMachineStatus(machineId, false, time, email);
