@@ -312,7 +312,7 @@ io.on("connection", function (socket) {
                 </body>
             </html>`
         );
-        }, time_in_milli_secs);
+        }, 5000); // time_in_milli_secs
       };
 
 
